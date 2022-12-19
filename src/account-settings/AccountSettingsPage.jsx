@@ -49,6 +49,7 @@ import {
 import { fetchSiteLanguages } from './site-language';
 import CoachingToggle from './coaching/CoachingToggle';
 import DemographicsSection from './demographics/DemographicsSection';
+import groupMap from './data/groups.json';
 
 class AccountSettingsPage extends React.Component {
   constructor(props, context) {
@@ -134,6 +135,19 @@ class AccountSettingsPage extends React.Component {
       value: '',
       label: this.props.intl.formatMessage(messages['account.settings.field.language_proficiencies.options.empty']),
     }].concat(getLanguageList(locale).map(({ code, name }) => ({ value: code, label: name }))),
+    wilayaOptions: [{
+      value: '',
+      label: this.props.intl.formatMessage(messages['account.settings.field.wilaya.options.empty']),
+    }].concat([...Object.keys(groupMap)].map(name => ({ value: name, label: name }))),
+
+    groupOptions: Object.fromEntries(Object.entries(groupMap).map(
+      ([wilaya, groups]) => ([wilaya, [{
+        value: '',
+        label: this.props.intl.formatMessage(messages['account.settings.field.group.options.empty']),
+      }].concat(groups.map(groupName => ({ value: groupName, label: groupName }))),
+      ]),
+    )),
+
     yearOfBirthOptions: [{
       value: '',
       label: this.props.intl.formatMessage(messages['account.settings.field.year_of_birth.options.empty']),
@@ -459,16 +473,25 @@ class AccountSettingsPage extends React.Component {
       onSubmit: this.handleSubmit,
     };
 
+    const handleExtendedProfileFieldChange = (name, value) => {
+      const updatedExtendedProfile = { ...this.props.formValues.extended_profile, [name]: value || null };
+      this.handleEditableFieldChange('extended_profile', updatedExtendedProfile);
+    };
+    const handleExtendedProfileFieldSubmit = (fieldName, fieldValue) => {
+      this.handleSubmit('extended_profile', [{ field_name: fieldName, field_value: fieldValue }]);
+    };
+
     // Memoized options lists
     const {
       countryOptions,
       stateOptions,
       languageProficiencyOptions,
+      wilayaOptions,
+      groupOptions,
       yearOfBirthOptions,
       educationLevelOptions,
       genderOptions,
     } = this.getLocalizedOptions(this.context.locale, this.props.formValues.country);
-
     // Show State field only if the country is US (could include Canada later)
     const showState = this.props.formValues.country === COUNTRY_WITH_STATES;
 
@@ -684,7 +707,37 @@ class AccountSettingsPage extends React.Component {
             emptyLabel={this.props.intl.formatMessage(messages['account.settings.field.language.proficiencies.empty'])}
             {...editableFieldProps}
           />
-          {getConfig().COACHING_ENABLED
+
+          <EditableField
+            name="wilaya"
+            type="select"
+            value={this.props.formValues.extended_profile.wilaya}
+            options={wilayaOptions}
+            label={this.props.intl.formatMessage(messages['account.settings.field.wilaya'])}
+            emptyLabel={this.props.intl.formatMessage(messages['account.settings.field.wilaya.empty'])}
+            {...editableFieldProps}
+            onChange={handleExtendedProfileFieldChange}
+            onSubmit={() => {
+              handleExtendedProfileFieldSubmit('wilaya', this.props.formValues.extended_profile.wilaya);
+            }}
+          />
+          <EditableField
+            name="group"
+            type="select"
+            value={this.props.formValues.extended_profile.group}
+            isEditable={this.props.formValues.extended_profile.wilaya?.length > 0}
+            isGrayedOut={!this.props.formValues.extended_profile.wilaya}
+            options={groupOptions?.[this.props.formValues.extended_profile.wilaya] ?? []}
+            label={this.props.intl.formatMessage(messages['account.settings.field.group'])}
+            emptyLabel={this.props.intl.formatMessage(messages['account.settings.field.group.empty'])}
+            {...editableFieldProps}
+            onChange={handleExtendedProfileFieldChange}
+            onSubmit={() => {
+              handleExtendedProfileFieldSubmit('group', this.props.formValues.extended_profile.group);
+            }}
+          />
+          {
+          getConfig().COACHING_ENABLED
             && this.props.formValues.coaching.eligible_for_coaching
             && (
             <CoachingToggle
@@ -692,7 +745,8 @@ class AccountSettingsPage extends React.Component {
               phone_number={this.props.formValues.phone_number}
               coaching={this.props.formValues.coaching}
             />
-            )}
+            )
+}
         </div>
         {getConfig().ENABLE_DEMOGRAPHICS_COLLECTION && this.renderDemographicsSection()}
         <div className="account-section pt-3 mb-5" id="social-media">
@@ -807,7 +861,7 @@ class AccountSettingsPage extends React.Component {
       loaded,
       loadingError,
     } = this.props;
-
+    console.log(this.props.drafts, this.props.formValues);
     return (
       <div className="page__account-settings container-fluid py-5">
         {this.renderDuplicateTpaProviderMessage()}

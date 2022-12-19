@@ -172,6 +172,12 @@ const formValuesSelector = createSelector(
       } else {
         formValues[name] = chooseFormValue(drafts[name], value) || '';
       }
+      if (name === 'extended_profile') {
+        formValues[name] = {
+          ...Object.fromEntries(value.map(({ field_name, field_value }) => ([field_name, field_value]))),
+          ...drafts[name],
+        };
+      }
     });
     return formValues;
   },
