@@ -715,7 +715,6 @@ class AccountSettingsPage extends React.Component {
             options={wilayaOptions}
             label={this.props.intl.formatMessage(messages['account.settings.field.wilaya'])}
             emptyLabel={this.props.intl.formatMessage(messages['account.settings.field.wilaya.empty'])}
-            {...editableFieldProps}
             onChange={handleExtendedProfileFieldChange}
             onSubmit={() => {
               handleExtendedProfileFieldSubmit('wilaya', this.props.formValues.extended_profile.wilaya);
@@ -730,7 +729,6 @@ class AccountSettingsPage extends React.Component {
             options={groupOptions?.[this.props.formValues.extended_profile.wilaya] ?? []}
             label={this.props.intl.formatMessage(messages['account.settings.field.group'])}
             emptyLabel={this.props.intl.formatMessage(messages['account.settings.field.group.empty'])}
-            {...editableFieldProps}
             onChange={handleExtendedProfileFieldChange}
             onSubmit={() => {
               handleExtendedProfileFieldSubmit('group', this.props.formValues.extended_profile.group);
@@ -742,7 +740,6 @@ class AccountSettingsPage extends React.Component {
             value={this.props.formValues.extended_profile.code}
             label={this.props.intl.formatMessage(messages['account.settings.field.code'])}
             emptyLabel={this.props.intl.formatMessage(messages['account.settings.field.code.empty'])}
-            {...editableFieldProps}
             onChange={handleExtendedProfileFieldChange}
             onSubmit={() => {
               handleExtendedProfileFieldSubmit('code', this.props.formValues.extended_profile.code);
@@ -873,7 +870,6 @@ class AccountSettingsPage extends React.Component {
       loaded,
       loadingError,
     } = this.props;
-    console.log(this.props.drafts, this.props.formValues);
     return (
       <div className="page__account-settings container-fluid py-5">
         {this.renderDuplicateTpaProviderMessage()}
