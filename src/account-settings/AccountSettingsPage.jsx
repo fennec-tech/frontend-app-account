@@ -736,6 +736,18 @@ class AccountSettingsPage extends React.Component {
               handleExtendedProfileFieldSubmit('group', this.props.formValues.extended_profile.group);
             }}
           />
+          <EditableField
+            name="code"
+            type="text"
+            value={this.props.formValues.extended_profile.code}
+            label={this.props.intl.formatMessage(messages['account.settings.field.code'])}
+            emptyLabel={this.props.intl.formatMessage(messages['account.settings.field.code.empty'])}
+            {...editableFieldProps}
+            onChange={handleExtendedProfileFieldChange}
+            onSubmit={() => {
+              handleExtendedProfileFieldSubmit('code', this.props.formValues.extended_profile.code);
+            }}
+          />
           {
           getConfig().COACHING_ENABLED
             && this.props.formValues.coaching.eligible_for_coaching
