@@ -485,6 +485,17 @@ const messages = defineMessages({
     description: 'Option for an empty value on account settings group field.',
   },
 
+  'account.settings.field.code': {
+    id: 'account.settings.field.code',
+    defaultMessage: 'code',
+    description: 'Label for account settings code field.',
+  },
+  'account.settings.field.code.empty': {
+    id: 'account.settings.field.code.empty',
+    defaultMessage: 'Add code',
+    description: 'Placeholder for empty account settings code field.',
+  },
+
   'account.settings.field.time.zone': {
     id: 'account.settings.field.time.zone',
     defaultMessage: 'Time zone',
